@@ -50,7 +50,7 @@ export class TrackController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe('track')) id: string) {
     return this.trackService.findOne(id);
   }
 
@@ -62,7 +62,7 @@ export class TrackController {
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', new ParseUUIDPipe('track')) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
     return this.trackService.update(id, updateTrackDto);
@@ -75,7 +75,7 @@ export class TrackController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', new ParseUUIDPipe('track')) id: string) {
     this.trackService.remove(id);
   }
 }

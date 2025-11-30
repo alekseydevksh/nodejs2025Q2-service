@@ -674,7 +674,7 @@ paths:
         201:
           description: Added successfully
         400:
-          description: Bad. trackId is invalid (not uuid)
+          description: Bad request. trackId is invalid (not uuid)
         422:
           description: Track with id doesn't exist.
     delete:
@@ -687,7 +687,7 @@ paths:
         204:
           description: Deleted successfully
         400:
-          description: Bad. trackId is invalid (not uuid)
+          description: Bad request. trackId is invalid (not uuid)
         404:
           description: Track was not found.
   /favs/album/{id}:
@@ -708,7 +708,7 @@ paths:
         201:
           description: Added successfully
         400:
-          description: Bad. albumId is invalid (not uuid)
+          description: Bad request. albumId is invalid (not uuid)
         422:
           description: Album with id doesn't exist.
     delete:
@@ -721,7 +721,7 @@ paths:
         204:
           description: Deleted successfully
         400:
-          description: Bad. albumId is invalid (not uuid)
+          description: Bad request. albumId is invalid (not uuid)
         404:
           description: Album was not found.
   /favs/artist/{id}:

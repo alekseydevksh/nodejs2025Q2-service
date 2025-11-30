@@ -50,7 +50,7 @@ export class AlbumController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe('album')) id: string) {
     return this.albumService.findOne(id);
   }
 
@@ -62,7 +62,7 @@ export class AlbumController {
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', new ParseUUIDPipe('album')) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
     return this.albumService.update(id, updateAlbumDto);
@@ -75,7 +75,7 @@ export class AlbumController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', new ParseUUIDPipe('album')) id: string) {
     this.albumService.remove(id);
   }
 }

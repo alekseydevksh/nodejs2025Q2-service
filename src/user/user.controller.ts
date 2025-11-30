@@ -40,7 +40,7 @@ export class UserController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('user'))
   @ApiResponse(ApiResponses.NotFoundUser())
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe('user')) id: string) {
     return this.userService.findOne(id);
   }
 
@@ -63,7 +63,7 @@ export class UserController {
   @ApiResponse(ApiResponses.ForbiddenWrongPassword())
   @ApiResponse(ApiResponses.NotFoundUser())
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', new ParseUUIDPipe('user')) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     return this.userService.update(id, updatePasswordDto);
@@ -76,7 +76,7 @@ export class UserController {
   @ApiResponse(ApiResponses.Deleted('The user has been deleted'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('user'))
   @ApiResponse(ApiResponses.NotFoundUser())
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', new ParseUUIDPipe('user')) id: string) {
     this.userService.remove(id);
   }
 }

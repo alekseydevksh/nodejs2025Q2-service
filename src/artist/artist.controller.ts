@@ -50,7 +50,7 @@ export class ArtistController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe('artist')) id: string) {
     return this.artistService.findOne(id);
   }
 
@@ -62,7 +62,7 @@ export class ArtistController {
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', new ParseUUIDPipe('artist')) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
     return this.artistService.update(id, updateArtistDto);
@@ -75,7 +75,7 @@ export class ArtistController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', new ParseUUIDPipe('artist')) id: string) {
     this.artistService.remove(id);
   }
 }
