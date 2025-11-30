@@ -1,27 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { AlbumController } from './album.controller';
 import { AlbumService } from './album.service';
+import {
+  createControllerTestModule,
+  getBasicServiceMock,
+} from '../common/test-utils/controller-test.utils';
 
 describe('AlbumController', () => {
   let controller: AlbumController;
   let service: AlbumService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AlbumController],
-      providers: [
-        {
-          provide: AlbumService,
-          useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
-          },
-        },
-      ],
-    }).compile();
+    const mockService = getBasicServiceMock();
+    const module: TestingModule = await createControllerTestModule(
+      AlbumController,
+      AlbumService,
+      mockService,
+    );
 
     controller = module.get<AlbumController>(AlbumController);
     service = module.get<AlbumService>(AlbumService);

@@ -1,29 +1,30 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { TrackService } from './track.service';
 import { FavoritesService } from '../favorites/favorites.service';
+import {
+  createServiceTestModule,
+  testServiceDefinition,
+  testFindAllReturnsArray,
+  testFindOneThrowsNotFound,
+} from '../common/test-utils/service-test.utils';
 
 describe('TrackService', () => {
   let service: TrackService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        TrackService,
-        {
-          provide: FavoritesService,
-          useValue: {
-            removeTrackFromFavorites: jest.fn(),
-          },
+    const module: TestingModule = await createServiceTestModule(TrackService, [
+      {
+        provide: FavoritesService,
+        useValue: {
+          removeTrackFromFavorites: jest.fn(),
         },
-      ],
-    }).compile();
+      },
+    ]);
 
     service = module.get<TrackService>(TrackService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  testServiceDefinition(service);
 
   describe('create', () => {
     it('should create a track', () => {
@@ -42,15 +43,10 @@ describe('TrackService', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of tracks', () => {
-      const result = service.findAll();
-      expect(Array.isArray(result)).toBe(true);
-    });
+    testFindAllReturnsArray(() => service.findAll(), 'tracks');
   });
 
   describe('findOne', () => {
-    it('should throw NotFoundException if track not found', () => {
-      expect(() => service.findOne('non-existent-id')).toThrow();
-    });
+    testFindOneThrowsNotFound((id) => service.findOne(id), 'track');
   });
 });

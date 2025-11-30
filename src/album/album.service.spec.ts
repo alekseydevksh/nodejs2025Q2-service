@@ -1,36 +1,37 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { AlbumService } from './album.service';
 import { TrackService } from '../track/track.service';
 import { FavoritesService } from '../favorites/favorites.service';
+import {
+  createServiceTestModule,
+  testServiceDefinition,
+  testFindAllReturnsArray,
+  testFindOneThrowsNotFound,
+} from '../common/test-utils/service-test.utils';
 
 describe('AlbumService', () => {
   let service: AlbumService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AlbumService,
-        {
-          provide: TrackService,
-          useValue: {
-            nullifyAlbumId: jest.fn(),
-          },
+    const module: TestingModule = await createServiceTestModule(AlbumService, [
+      {
+        provide: TrackService,
+        useValue: {
+          nullifyAlbumId: jest.fn(),
         },
-        {
-          provide: FavoritesService,
-          useValue: {
-            removeAlbumFromFavorites: jest.fn(),
-          },
+      },
+      {
+        provide: FavoritesService,
+        useValue: {
+          removeAlbumFromFavorites: jest.fn(),
         },
-      ],
-    }).compile();
+      },
+    ]);
 
     service = module.get<AlbumService>(AlbumService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  testServiceDefinition(service);
 
   describe('create', () => {
     it('should create an album', () => {
@@ -48,15 +49,10 @@ describe('AlbumService', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of albums', () => {
-      const result = service.findAll();
-      expect(Array.isArray(result)).toBe(true);
-    });
+    testFindAllReturnsArray(() => service.findAll(), 'albums');
   });
 
   describe('findOne', () => {
-    it('should throw NotFoundException if album not found', () => {
-      expect(() => service.findOne('non-existent-id')).toThrow();
-    });
+    testFindOneThrowsNotFound((id) => service.findOne(id), 'album');
   });
 });
