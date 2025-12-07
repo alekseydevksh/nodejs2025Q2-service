@@ -20,8 +20,8 @@ export class FavoritesController {
   @Get()
   @ApiOperation({ summary: 'Get all favorites' })
   @ApiResponse(ApiResponses.Success())
-  findAll() {
-    return this.favoritesService.findAll();
+  async findAll() {
+    return await this.favoritesService.findAll();
   }
 
   @Post('artist/:id')
@@ -31,8 +31,8 @@ export class FavoritesController {
   @ApiResponse(ApiResponses.Created('Added successfully'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.UnprocessableEntity('Artist'))
-  addArtist(@Param('id', new ParseUUIDPipe('artist')) id: string) {
-    this.favoritesService.addArtist(id);
+  async addArtist(@Param('id', new ParseUUIDPipe('artist')) id: string) {
+    await this.favoritesService.addArtist(id);
     return { message: 'Added successfully' };
   }
 
@@ -43,8 +43,8 @@ export class FavoritesController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
-  removeArtist(@Param('id', new ParseUUIDPipe('artist')) id: string) {
-    this.favoritesService.removeArtist(id);
+  async removeArtist(@Param('id', new ParseUUIDPipe('artist')) id: string) {
+    await this.favoritesService.removeArtist(id);
   }
 
   @Post('album/:id')
@@ -54,8 +54,8 @@ export class FavoritesController {
   @ApiResponse(ApiResponses.Created('Added successfully'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.UnprocessableEntity('Album'))
-  addAlbum(@Param('id', new ParseUUIDPipe('album')) id: string) {
-    this.favoritesService.addAlbum(id);
+  async addAlbum(@Param('id', new ParseUUIDPipe('album')) id: string) {
+    await this.favoritesService.addAlbum(id);
     return { message: 'Added successfully' };
   }
 
@@ -66,8 +66,8 @@ export class FavoritesController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
-  removeAlbum(@Param('id', new ParseUUIDPipe('album')) id: string) {
-    this.favoritesService.removeAlbum(id);
+  async removeAlbum(@Param('id', new ParseUUIDPipe('album')) id: string) {
+    await this.favoritesService.removeAlbum(id);
   }
 
   @Post('track/:id')
@@ -77,8 +77,8 @@ export class FavoritesController {
   @ApiResponse(ApiResponses.Created('Added successfully'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.UnprocessableEntity('Track'))
-  addTrack(@Param('id', new ParseUUIDPipe('track')) id: string) {
-    this.favoritesService.addTrack(id);
+  async addTrack(@Param('id', new ParseUUIDPipe('track')) id: string) {
+    await this.favoritesService.addTrack(id);
     return { message: 'Added successfully' };
   }
 
@@ -89,7 +89,7 @@ export class FavoritesController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
-  removeTrack(@Param('id', new ParseUUIDPipe('track')) id: string) {
-    this.favoritesService.removeTrack(id);
+  async removeTrack(@Param('id', new ParseUUIDPipe('track')) id: string) {
+    await this.favoritesService.removeTrack(id);
   }
 }
