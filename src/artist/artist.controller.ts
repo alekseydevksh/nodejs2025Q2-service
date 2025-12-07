@@ -33,15 +33,15 @@ export class ArtistController {
   @ApiBody({ type: CreateArtistDto })
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestMissingFields())
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistService.create(createArtistDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all artists' })
   @ApiResponse(ApiResponses.Success())
-  findAll() {
-    return this.artistService.findAll();
+  async findAll() {
+    return await this.artistService.findAll();
   }
 
   @Get(':id')
@@ -50,8 +50,8 @@ export class ArtistController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
-  findOne(@Param('id', new ParseUUIDPipe('artist')) id: string) {
-    return this.artistService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe('artist')) id: string) {
+    return await this.artistService.findOne(id);
   }
 
   @Put(':id')
@@ -61,11 +61,11 @@ export class ArtistController {
   @ApiResponse(ApiResponses.Updated('artist'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe('artist')) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    return this.artistService.update(id, updateArtistDto);
+    return await this.artistService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
@@ -75,7 +75,7 @@ export class ArtistController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('artist'))
   @ApiResponse(ApiResponses.NotFound('Artist'))
-  remove(@Param('id', new ParseUUIDPipe('artist')) id: string) {
-    this.artistService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe('artist')) id: string) {
+    await this.artistService.remove(id);
   }
 }
