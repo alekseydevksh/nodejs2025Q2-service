@@ -24,6 +24,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker:build": "docker compose build",
+    "docker:build:no-cache": "docker compose build --no-cache app",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:reset": "docker compose down -v",
