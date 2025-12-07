@@ -30,8 +30,8 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse(ApiResponses.Success())
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
@@ -40,8 +40,8 @@ export class UserController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('user'))
   @ApiResponse(ApiResponses.NotFoundUser())
-  findOne(@Param('id', new ParseUUIDPipe('user')) id: string) {
-    return this.userService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe('user')) id: string) {
+    return await this.userService.findOne(id);
   }
 
   @Post()
@@ -51,7 +51,7 @@ export class UserController {
   @ApiResponse(ApiResponses.Created('The user has been created.'))
   @ApiResponse(ApiResponses.BadRequestMissingFields())
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -66,7 +66,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe('user')) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.userService.update(id, updatePasswordDto);
+    return await this.userService.update(id, updatePasswordDto);
   }
 
   @Delete(':id')
@@ -76,7 +76,7 @@ export class UserController {
   @ApiResponse(ApiResponses.Deleted('The user has been deleted'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('user'))
   @ApiResponse(ApiResponses.NotFoundUser())
-  remove(@Param('id', new ParseUUIDPipe('user')) id: string) {
-    this.userService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe('user')) id: string) {
+    await this.userService.remove(id);
   }
 }

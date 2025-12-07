@@ -1,11 +1,12 @@
 # Home Library Service
 
-A REST API service for managing a home music library. Built with NestJS.
+A REST API service for managing a home music library. Built with NestJS, TypeORM, and PostgreSQL.
 
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads)
-- Node.js (>=22.14.0) - [Download & Install Node.js](https://nodejs.org/en/download/)
+- Node.js (>=24.10.0) - [Download & Install Node.js](https://nodejs.org/en/download/)
+- Docker - [Download & Install Docker](https://www.docker.com/get-started)
 
 ## Installation
 
@@ -15,24 +16,74 @@ cd nodejs2025Q2-service
 npm install
 ```
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory (copy from `.env.example`):
 
 ```bash
 PORT=4000
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=home_library
+NODE_ENV=development
 ```
 
 ## Running
 
-```bash
-npm start
-```
+### Using Docker (Recommended)
 
-The service will start on port 4000 (or the port specified in `.env`).
+1. **Build and start containers:**
+   ```bash
+   npm run docker:build
+   npm run docker:up
+   ```
+   Or: `docker compose up -d --build`
 
-For development with auto-reload:
-```bash
-npm run start:dev
-```
+2. **Run migrations:**
+   ```bash
+   npm run migration:run
+   ```
+
+3. **View logs:**
+   ```bash
+   docker compose logs -f app
+   ```
+
+4. **Stop containers:**
+   ```bash
+   npm run docker:down
+   ```
+
+### Running Locally
+
+1. **Start database container:**
+   ```bash
+   docker compose up -d postgres
+   ```
+
+2. **Update `.env`:** Set `POSTGRES_HOST=localhost` (app connects to containerized DB via exposed port)
+
+3. **Run migrations:**
+   ```bash
+   npm run migration:run
+   ```
+
+4. **Start app:**
+   ```bash
+   npm start
+   ```
+   Or for development: `npm run start:dev`
+
+5. **Stop database when done:**
+   ```bash
+   docker compose stop postgres
+   ```
+
+## Database Migrations
+
+- **Run migrations:** `npm run migration:run`
+- **Revert last:** `npm run migration:revert`
+- **Generate new:** `npm run migration:generate -- src/migrations/MigrationName`
 
 ## API Endpoints
 
@@ -82,26 +133,24 @@ http://localhost:4000/doc/
 
 ## Testing
 
-**Important:** Start the application first (`npm start`), then run tests in another terminal.
+**Important:** Start the application first, then run tests in another terminal.
 
-### Run all tests:
 ```bash
-npm run test
+npm run test                    # Run all tests
+npm run test -- <path>          # Run specific test suite
 ```
 
-### Run a specific test suite:
-```bash
-npm run test -- <path to suite>
-```
+## Docker Commands
 
-## Auto-fix and format
+- `npm run docker:build` - Build images
+- `npm run docker:up` - Start containers
+- `npm run docker:down` - Stop containers
+- `npm run docker:reset` - Stop and remove volumes
+- `npm run docker:scan` - Scan for vulnerabilities
 
-### Linting:
-```bash
-npm run lint
-```
+## Code Quality
 
-### Formatting:
 ```bash
-npm run format
+npm run lint      # Lint and auto-fix
+npm run format    # Format code
 ```
