@@ -33,15 +33,15 @@ export class TrackController {
   @ApiBody({ type: CreateTrackDto })
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestMissingFields())
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.trackService.create(createTrackDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get tracks list' })
   @ApiResponse(ApiResponses.Success())
-  findAll() {
-    return this.trackService.findAll();
+  async findAll() {
+    return await this.trackService.findAll();
   }
 
   @Get(':id')
@@ -50,8 +50,8 @@ export class TrackController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
-  findOne(@Param('id', new ParseUUIDPipe('track')) id: string) {
-    return this.trackService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe('track')) id: string) {
+    return await this.trackService.findOne(id);
   }
 
   @Put(':id')
@@ -61,11 +61,11 @@ export class TrackController {
   @ApiResponse(ApiResponses.Updated('track'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe('track')) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    return this.trackService.update(id, updateTrackDto);
+    return await this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
@@ -75,7 +75,7 @@ export class TrackController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('track'))
   @ApiResponse(ApiResponses.NotFound('Track'))
-  remove(@Param('id', new ParseUUIDPipe('track')) id: string) {
-    this.trackService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe('track')) id: string) {
+    await this.trackService.remove(id);
   }
 }
