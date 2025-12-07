@@ -2,8 +2,10 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -11,34 +13,51 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [];
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    if (!createUserDto.login || !createUserDto.password) {
+      throw new BadRequestException('Login or password are required');
+    }
+
+    const existingUser = await this.userRepository.findOne({
+      where: { login: createUserDto.login },
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('User with this login already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const now = Date.now();
 
-    const newUser = new User({
-      id: randomUUID(),
+    const newUser = this.userRepository.create({
       login: createUserDto.login,
       password: hashedPassword,
-      version: 1,
       createdAt: now,
       updatedAt: now,
     });
 
-    this.users.push(newUser);
-    return newUser;
+    const savedUser = await this.userRepository.save(newUser);
+
+    return savedUser;
   }
 
-  findAll(): User[] {
-    return this.users;
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    return users;
   }
 
-  findOne(id: string): User {
-    const user = this.users.find((u) => u.id === id);
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     return user;
   }
 
@@ -46,7 +65,14 @@ export class UserService {
     id: string,
     updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
-    const user = this.users.find((u) => u.id === id);
+    if (!updatePasswordDto.oldPassword || !updatePasswordDto.newPassword) {
+      throw new BadRequestException(
+        'Old password or new password are required',
+      );
+    }
+
+    const user = await this.userRepository.findOne({ where: { id } });
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -57,21 +83,22 @@ export class UserService {
     );
 
     if (!isPasswordValid) {
-      throw new ForbiddenException('oldPassword is wrong');
+      throw new ForbiddenException('Old password is wrong');
     }
 
     user.password = await bcrypt.hash(updatePasswordDto.newPassword, 10);
-    user.version += 1;
     user.updatedAt = Date.now();
 
-    return user;
+    const savedUser = await this.userRepository.save(user);
+
+    return savedUser;
   }
 
-  remove(id: string): void {
-    const index = this.users.findIndex((u) => u.id === id);
-    if (index === -1) {
+  async remove(id: string): Promise<void> {
+    const result = await this.userRepository.delete(id);
+
+    if (result.affected === 0) {
       throw new NotFoundException('User not found');
     }
-    this.users.splice(index, 1);
   }
 }
