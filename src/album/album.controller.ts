@@ -33,15 +33,15 @@ export class AlbumController {
   @ApiBody({ type: CreateAlbumDto })
   @ApiResponse(ApiResponses.Created('Album is created'))
   @ApiResponse(ApiResponses.BadRequestMissingFields())
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    return await this.albumService.create(createAlbumDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get albums list' })
   @ApiResponse(ApiResponses.Success())
-  findAll() {
-    return this.albumService.findAll();
+  async findAll() {
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
@@ -50,8 +50,8 @@ export class AlbumController {
   @ApiResponse(ApiResponses.Success())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
-  findOne(@Param('id', new ParseUUIDPipe('album')) id: string) {
-    return this.albumService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe('album')) id: string) {
+    return await this.albumService.findOne(id);
   }
 
   @Put(':id')
@@ -61,11 +61,11 @@ export class AlbumController {
   @ApiResponse(ApiResponses.Updated('album'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe('album')) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    return this.albumService.update(id, updateAlbumDto);
+    return await this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
@@ -75,7 +75,7 @@ export class AlbumController {
   @ApiResponse(ApiResponses.Deleted())
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
-  remove(@Param('id', new ParseUUIDPipe('album')) id: string) {
-    this.albumService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe('album')) id: string) {
+    await this.albumService.remove(id);
   }
 }
