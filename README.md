@@ -37,7 +37,7 @@ NODE_ENV=development
    npm run docker:build
    npm run docker:up
    ```
-   Or: `docker-compose up -d --build`
+   Or: `docker compose up -d --build`
 
 2. **Run migrations:**
    ```bash
@@ -46,7 +46,7 @@ NODE_ENV=development
 
 3. **View logs:**
    ```bash
-   docker-compose logs -f app
+   docker compose logs -f app
    ```
 
 4. **Stop containers:**
@@ -56,10 +56,28 @@ NODE_ENV=development
 
 ### Running Locally
 
-1. **Update `.env`:** Set `POSTGRES_HOST=localhost`
-2. **Create database:** `createdb home_library`
-3. **Run migrations:** `npm run migration:run`
-4. **Start app:** `npm start` or `npm run start:dev`
+1. **Start database container:**
+   ```bash
+   docker compose up -d postgres
+   ```
+
+2. **Update `.env`:** Set `POSTGRES_HOST=localhost` (app connects to containerized DB via exposed port)
+
+3. **Run migrations:**
+   ```bash
+   npm run migration:run
+   ```
+
+4. **Start app:**
+   ```bash
+   npm start
+   ```
+   Or for development: `npm run start:dev`
+
+5. **Stop database when done:**
+   ```bash
+   docker compose stop postgres
+   ```
 
 ## Database Migrations
 
