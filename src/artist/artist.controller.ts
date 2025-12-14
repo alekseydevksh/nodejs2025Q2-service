@@ -15,6 +15,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -23,6 +24,7 @@ import { ParseUUIDPipe } from '../common/pipes/parse-uuid.pipe';
 import { ApiResponses } from '../common/swagger/api-responses';
 
 @ApiTags('Artist')
+@ApiBearerAuth('JWT-auth')
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}

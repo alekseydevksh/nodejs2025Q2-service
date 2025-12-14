@@ -63,7 +63,6 @@ export class TrackService {
       throw new NotFoundException('Track was not found.');
     }
 
-    // Cascade deletion: remove from favorites
     await this.favoritesService.removeTrackFromFavorites(id);
 
     await this.trackRepository.remove(track);

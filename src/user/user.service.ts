@@ -10,12 +10,14 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -31,7 +33,10 @@ export class UserService {
       throw new BadRequestException('User with this login already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      Number(this.configService.get('CRYPT_SALT')),
+    );
     const now = Date.now();
 
     const newUser = this.userRepository.create({
@@ -86,7 +91,10 @@ export class UserService {
       throw new ForbiddenException('Old password is wrong');
     }
 
-    user.password = await bcrypt.hash(updatePasswordDto.newPassword, 10);
+    user.password = await bcrypt.hash(
+      updatePasswordDto.newPassword,
+      Number(this.configService.get('CRYPT_SALT')),
+    );
     user.updatedAt = Date.now();
 
     const savedUser = await this.userRepository.save(user);

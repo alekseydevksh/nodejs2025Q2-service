@@ -15,6 +15,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -23,6 +24,7 @@ import { ParseUUIDPipe } from '../common/pipes/parse-uuid.pipe';
 import { ApiResponses } from '../common/swagger/api-responses';
 
 @ApiTags('Album')
+@ApiBearerAuth('JWT-auth')
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
@@ -33,6 +35,7 @@ export class AlbumController {
   @ApiBody({ type: CreateAlbumDto })
   @ApiResponse(ApiResponses.Created('Album is created'))
   @ApiResponse(ApiResponses.BadRequestMissingFields())
+  @ApiResponse(ApiResponses.UnprocessableEntity('Artist'))
   async create(@Body() createAlbumDto: CreateAlbumDto) {
     return await this.albumService.create(createAlbumDto);
   }
@@ -61,6 +64,7 @@ export class AlbumController {
   @ApiResponse(ApiResponses.Updated('album'))
   @ApiResponse(ApiResponses.BadRequestInvalidUuid('album'))
   @ApiResponse(ApiResponses.NotFound('Album'))
+  @ApiResponse(ApiResponses.UnprocessableEntity('Artist'))
   async update(
     @Param('id', new ParseUUIDPipe('album')) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,

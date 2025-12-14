@@ -15,6 +15,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -23,6 +24,7 @@ import { ParseUUIDPipe } from '../common/pipes/parse-uuid.pipe';
 import { ApiResponses } from '../common/swagger/api-responses';
 
 @ApiTags('Track')
+@ApiBearerAuth('JWT-auth')
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
