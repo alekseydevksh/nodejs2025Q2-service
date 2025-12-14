@@ -2,12 +2,30 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { LoggingService } from './common/logging/logging.service';
+import { LoggingInterceptor } from './common/logging/logging.interceptor';
+import { HttpExceptionFilter } from './common/logging/http-exception.filter';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const loggingService = app.get(LoggingService);
+
+  app.useGlobalFilters(new HttpExceptionFilter(loggingService));
+  app.useGlobalInterceptors(new LoggingInterceptor(loggingService));
+
+  process.on('uncaughtException', (error: Error) => {
+    loggingService.error('Uncaught Exception', error);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+    loggingService.error('Unhandled Rejection', { reason, promise });
+    process.exit(1);
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
