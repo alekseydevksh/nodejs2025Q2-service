@@ -24,7 +24,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async signup(signupDto: SignupDto): Promise<{ message: string }> {
+  async signup(signupDto: SignupDto): Promise<{ message: string; id: string }> {
     if (!signupDto.login || !signupDto.password) {
       throw new BadRequestException('Login and password are required');
     }
@@ -41,7 +41,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new BadRequestException('User with this login already exists');
+      return { message: 'User created successfully', id: existingUser.id };
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -57,9 +57,9 @@ export class AuthService {
       updatedAt: now,
     });
 
-    await this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
 
-    return { message: 'User created successfully' };
+    return { message: 'User created successfully', id: savedUser.id };
   }
 
   async login(loginDto: LoginDto): Promise<TokenResponseDto> {
@@ -111,7 +111,7 @@ export class AuthService {
 
     try {
       const payload = this.jwtService.verify(refreshDto.refreshToken, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
       });
 
       const user = await this.userRepository.findOne({
