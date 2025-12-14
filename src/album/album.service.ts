@@ -1,11 +1,12 @@
 import {
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
   Inject,
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, QueryFailedError } from 'typeorm';
 import { Album } from './entities/album.entity';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -30,7 +31,12 @@ export class AlbumService {
       artistId: createAlbumDto.artistId ?? null,
     });
 
-    return await this.albumRepository.save(newAlbum);
+    try {
+      return await this.albumRepository.save(newAlbum);
+    } catch (error) {
+      this.handleForeignKeyError(error);
+      throw error;
+    }
   }
 
   async findAll(): Promise<Album[]> {
@@ -46,23 +52,22 @@ export class AlbumService {
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
-    const album = await this.albumRepository.findOne({ where: { id } });
-    if (!album) {
-      throw new NotFoundException('Album was not found.');
-    }
+    const album = await this.findOne(id);
 
     album.name = updateAlbumDto.name;
     album.year = updateAlbumDto.year;
     album.artistId = updateAlbumDto.artistId ?? null;
 
-    return await this.albumRepository.save(album);
+    try {
+      return await this.albumRepository.save(album);
+    } catch (error) {
+      this.handleForeignKeyError(error);
+      throw error;
+    }
   }
 
   async remove(id: string): Promise<void> {
-    const album = await this.albumRepository.findOne({ where: { id } });
-    if (!album) {
-      throw new NotFoundException('Album was not found.');
-    }
+    const album = await this.findOne(id);
 
     await this.trackService.nullifyAlbumId(id);
     await this.favoritesService.removeAlbumFromFavorites(id);
@@ -72,5 +77,16 @@ export class AlbumService {
 
   async nullifyArtistId(artistId: string): Promise<void> {
     await this.albumRepository.update({ artistId }, { artistId: null });
+  }
+
+  private handleForeignKeyError(error: unknown): void {
+    if (
+      error instanceof QueryFailedError &&
+      error.message.includes('foreign key constraint')
+    ) {
+      if (error.message.includes('artistId')) {
+        throw new UnprocessableEntityException("Artist with id doesn't exist.");
+      }
+    }
   }
 }
