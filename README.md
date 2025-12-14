@@ -25,7 +25,17 @@ POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=home_library
+
 NODE_ENV=development
+
+JWT_SECRET_KEY=secret123123
+JWT_SECRET_REFRESH_KEY=secret123123
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
+CRYPT_SALT=10
+
+LOG_LEVEL=log
+LOG_MAX_FILE_SIZE_KB=1024
 ```
 
 ## Running
@@ -86,6 +96,13 @@ NODE_ENV=development
 - **Generate new:** `npm run migration:generate -- src/migrations/MigrationName`
 
 ## API Endpoints
+
+### Authentication (`/auth`)
+- `POST /auth/signup` - Create a new user account
+- `POST /auth/login` - Login with credentials (returns Access and Refresh tokens)
+- `POST /auth/refresh` - Refresh Access and Refresh tokens using Refresh token
+
+**Note:** All other endpoints require authentication via Bearer token in the `Authorization` header.
 
 ### Users (`/user`)
 - `GET /user` - Get all users
